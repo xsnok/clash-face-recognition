@@ -1,11 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
+import Loading from "./Loading";
+import angry from "../assets/angry.png";
+import disgusted from "../assets/disgusted.png";
+import fearful from "../assets/fearful.png";
+import happy from "../assets/happy.png";
+import neutral from "../assets/neutral.png";
+import sad from "../assets/sad.png";
+import surprised from "../assets/surprised.png";
 
 export default function WebCam() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const [loading, setLoading] = useState(true);
   const [currentEmotion, setCurrentEmotion] = useState("");
-
+  const images = {
+    angry,
+    disgusted,
+    fearful,
+    happy,
+    neutral,
+    sad,
+    surprised,
+  };
   useEffect(() => {
     async function startWebcam() {
       try {
@@ -19,6 +36,7 @@ export default function WebCam() {
 
           videoRef.current.onloadedmetadata = () => {
             videoRef.current.play();
+            setLoading(false);
             detectFaces();
           };
         }
@@ -110,6 +128,7 @@ export default function WebCam() {
 
   return (
     <>
+      {loading ? <Loading /> : null}
       <div style={{ position: "relative", width: 720, height: 560 }}>
         <video
           ref={videoRef}
@@ -126,7 +145,7 @@ export default function WebCam() {
           style={{ position: "absolute", top: 0, left: 0 }}
         />
       </div>
-      <div>{}</div>
+      <div>{currentEmotion && <img src={images[currentEmotion]}></img>}</div>
     </>
   );
 }
