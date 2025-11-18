@@ -155,14 +155,11 @@ export default function WebCam() {
 
   return (
     <div className="flex flex-col items-center w-full text-white gap-6">
-      {/* Title */}
       <h1 className="text-3xl font-bold mb-2">Clash Emote Detector</h1>
 
-      {/* Light blue panel */}
       <div className="bg-[#2d4f80] w-full max-w-[900px] rounded-xl p-6 flex flex-col items-center gap-6">
         {loading && <Loading />}
 
-        {/* Emotion Image */}
         <div className="h-40 flex items-center justify-center">
           {currentEmotion && (
             <img
@@ -173,7 +170,6 @@ export default function WebCam() {
           )}
         </div>
 
-        {/* Video + Canvas container */}
         <div className="relative w-full max-w-[500px] aspect-video mx-auto">
           <video
             ref={videoRef}
