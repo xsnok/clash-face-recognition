@@ -3,9 +3,9 @@ import WebCam from "./components/WebCam";
 
 function App() {
   return (
-    <>
-      <WebCam></WebCam>
-    </>
+    <div className="min-h-screen bg-[#0a1a3c] flex items-center justify-center p-4">
+      <WebCam />
+    </div>
   );
 }
 
