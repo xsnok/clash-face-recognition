@@ -1,12 +1,12 @@
-import './App.css'
-import WebCam from './components/WebCam'
+import "./App.css";
+import WebCam from "./components/WebCam";
 
 function App() {
   return (
     <>
-    <WebCam></WebCam>
+      <WebCam></WebCam>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

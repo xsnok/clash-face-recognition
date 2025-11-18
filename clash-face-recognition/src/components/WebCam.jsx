@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
-import * as faceapi from 'face-api.js';
+import * as faceapi from "face-api.js";
 
 export default function WebCam() {
-	const videoRef = useRef(null)
-	const canvasRef = useRef(null)
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
-	useEffect(() => {
-		async function startWebcam() {
+  useEffect(() => {
+    async function startWebcam() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
@@ -16,75 +16,95 @@ export default function WebCam() {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
 
-					videoRef.current.onloadedmetadata = () => {
-						videoRef.current.play()
-						detectFaces()
-					}
+          videoRef.current.onloadedmetadata = () => {
+            videoRef.current.play();
+            detectFaces();
+          };
         }
       } catch (err) {
         console.error("Error accessing webcam:", err);
       }
-		}
+    }
 
-		async function loadModels() {
-			Promise.all([
-      	faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-				faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-				faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
-				faceapi.nets.faceExpressionNet.loadFromUri("/models"),
-			])
+    async function loadModels() {
+      Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+        faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+        faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+        faceapi.nets.faceExpressionNet.loadFromUri("/models"),
+      ]);
 
-			startWebcam()
-		}
-		
-		async function detectFaces() {
-			setInterval(async () => {
-      	const canvas = faceapi.createCanvasFromMedia(videoRef.current);
-				canvasRef.current.innerHTML = "";
-      	canvasRef.current.appendChild(canvas);
+      startWebcam();
+    }
 
-				const displaySize = {
+    async function detectFaces() {
+      setInterval(async () => {
+        const canvas = faceapi.createCanvasFromMedia(videoRef.current);
+        canvasRef.current.innerHTML = "";
+        canvasRef.current.appendChild(canvas);
+
+        const displaySize = {
           width: 720,
-          height: 560
-        }
-				faceapi.matchDimensions(canvas, displaySize)
+          height: 560,
+        };
+        faceapi.matchDimensions(canvas, displaySize);
 
-				const detections = await faceapi.detectAllFaces(videoRef.current,
-					new faceapi.TinyFaceDetectorOptions())
-					.withFaceLandmarks().withFaceExpressions()
-				
-				canvas.getContext('2d').clearRect(0, 0, 720, 560);
+        const detections = await faceapi
+          .detectAllFaces(
+            videoRef.current,
+            new faceapi.TinyFaceDetectorOptions(),
+          )
+          .withFaceLandmarks()
+          .withFaceExpressions();
 
-				const resizedDetections = faceapi.resizeResults(detections, displaySize);
+        canvas.getContext("2d").clearRect(0, 0, 720, 560);
 
-        canvasRef && canvasRef.current && canvasRef.current.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-        canvasRef && canvasRef.current && faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
-        canvasRef && canvasRef.current && faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
-        canvasRef && canvasRef.current && faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
-			}, 100)
-		}
+        const resizedDetections = faceapi.resizeResults(
+          detections,
+          displaySize,
+        );
 
-		loadModels()
-	})
+        canvasRef &&
+          canvasRef.current &&
+          canvasRef.current
+            .getContext("2d")
+            .clearRect(0, 0, canvas.width, canvas.height);
+        canvasRef &&
+          canvasRef.current &&
+          faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+        canvasRef &&
+          canvasRef.current &&
+          faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
+        canvasRef &&
+          canvasRef.current &&
+          faceapi.draw.drawFaceExpressions(
+            canvasRef.current,
+            resizedDetections,
+          );
+      }, 100);
+    }
+
+    loadModels();
+  });
 
   return (
-		<>
-    <div style={{ position: "relative", width: 720, height: 560 }}>
-      <video
-        ref={videoRef}
-        width={720}
-        height={560}
-        autoPlay
-        muted
-        style={{ position: "absolute", top: 0, left: 0 }}
-      />
-      <canvas
-        ref={canvasRef}
-        width={720}
-        height={560}
-        style={{ position: "absolute", top: 0, left: 0 }}
-      />
-    </div>
-		</>
-  )
+    <>
+      <div style={{ position: "relative", width: 720, height: 560 }}>
+        <video
+          ref={videoRef}
+          width={720}
+          height={560}
+          autoPlay
+          muted
+          style={{ position: "absolute", top: 0, left: 0 }}
+        />
+        <canvas
+          ref={canvasRef}
+          width={720}
+          height={560}
+          style={{ position: "absolute", top: 0, left: 0 }}
+        />
+      </div>
+    </>
+  );
 }
