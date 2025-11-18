@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
 
 export default function WebCam() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const [currentEmotion, setCurrentEmotion] = useState("");
 
   useEffect(() => {
     async function startWebcam() {
@@ -52,7 +53,7 @@ export default function WebCam() {
         const detections = await faceapi
           .detectAllFaces(
             videoRef.current,
-            new faceapi.TinyFaceDetectorOptions(),
+            new faceapi.TinyFaceDetectorOptions()
           )
           .withFaceLandmarks()
           .withFaceExpressions();
@@ -61,7 +62,7 @@ export default function WebCam() {
 
         const resizedDetections = faceapi.resizeResults(
           detections,
-          displaySize,
+          displaySize
         );
 
         canvasRef &&
@@ -79,13 +80,33 @@ export default function WebCam() {
           canvasRef.current &&
           faceapi.draw.drawFaceExpressions(
             canvasRef.current,
-            resizedDetections,
+            resizedDetections
           );
+        try {
+          findBestEmotion(detections[0].expressions);
+        } catch {
+          console.log("Nobody detected on screen");
+        }
       }, 100);
     }
 
+    function findBestEmotion(expressions) {
+      let bestEmotion = null;
+      let score = 0;
+
+      for (const emotion in expressions) {
+        if (expressions[emotion] > score) {
+          score = expressions[emotion];
+          bestEmotion = emotion;
+        }
+      }
+
+      setCurrentEmotion(bestEmotion);
+      console.log(`${bestEmotion}: ${score}`);
+    }
+
     loadModels();
-  });
+  }, []);
 
   return (
     <>
@@ -105,6 +126,7 @@ export default function WebCam() {
           style={{ position: "absolute", top: 0, left: 0 }}
         />
       </div>
+      <div>{}</div>
     </>
   );
 }
