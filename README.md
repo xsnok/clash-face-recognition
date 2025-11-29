@@ -8,7 +8,7 @@ How to deploy this app:
 
 1. Clone the repository git clone https://github.com/your-username/clash-royale-purity-test.git
 
-2. cd clash-royale-purity-test
+2. cd into project folder
 
 3. Install dependencies npm install
 
