@@ -1,5 +1,6 @@
-midnight.hackclub.com
-hackclub.com
+https://midnight.hackclub.com
+https://hackclub.com
+This is a project made for hackclub Midnight!!
 
 Clash Royale computer vision emotions detector.
 Use at https://clash-emote-detector.vercel.app/
